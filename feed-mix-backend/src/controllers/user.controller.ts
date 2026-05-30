@@ -68,3 +68,17 @@ export const updateProfile: RequestHandler = asyncHandler(
     res.status(200).json({ user });
   },
 );
+
+export const getCurrentUser: RequestHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { userId } = getAuth(req);
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    res.status(200).json({ user });
+  },
+);
