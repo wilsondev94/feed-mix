@@ -45,8 +45,26 @@ export const createUser: RequestHandler = asyncHandler(
       profilePicture: clerkUser.imageUrl,
     };
 
+    // Create user in database
     const user = await User.create(userData);
 
     res.status(201).json({ user, message: "User created successfully" });
+  },
+);
+
+export const updateProfile: RequestHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { userId } = getAuth(req);
+
+    const user = await User.findOneAndUpdate({ clerkId: userId }, req.body, {
+      new: true,
+    });
+
+    if (!user) {
+      res.status(404).json({ error: "User not found fgsffh" });
+      return;
+    }
+
+    res.status(200).json({ user });
   },
 );
