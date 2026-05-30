@@ -2,6 +2,8 @@ import asyncHandler from "express-async-handler";
 import User from "../models/user.model.js";
 import type { Request, RequestHandler, Response } from "express";
 import { clerkClient, getAuth } from "@clerk/express";
+import mongoose from "mongoose";
+import Notification from "../models/notification.model.js";
 
 export const getUserProfile: RequestHandler = asyncHandler(
   async (req: Request, res: Response) => {
@@ -38,10 +40,10 @@ export const createUser: RequestHandler = asyncHandler(
 
     const userData = {
       clerkId: userId,
-      email: clerkUser.emailAddresses[0]?.emailAddress ?? "",
+      email: clerkUser.emailAddresses[0]?.emailAddress,
       firstName: clerkUser.firstName,
       lastName: clerkUser.lastName,
-      username: clerkUser.emailAddresses[0]?.emailAddress.split("@")[0] ?? "",
+      username: clerkUser.emailAddresses[0]?.emailAddress.split("@")[0],
       profilePicture: clerkUser.imageUrl,
     };
 
@@ -80,5 +82,60 @@ export const getCurrentUser: RequestHandler = asyncHandler(
     }
 
     res.status(200).json({ user });
+  },
+);
+
+export const followUser: RequestHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { userId } = getAuth(req);
+    const targetUserId = req.params.targetUserId as string;
+
+    if (userId === targetUserId) {
+      res.status(400).json({ error: "You cannot follow yourself" });
+      return;
+    }
+
+    const currentUser = await User.findOne({ clerkId: userId });
+    const targetUser = await User.findById(targetUserId);
+
+    if (!currentUser || !targetUser) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const targetObjectId = new mongoose.Types.ObjectId(targetUserId);
+
+    const isFollowing = currentUser.following.includes(targetObjectId);
+
+    if (isFollowing) {
+      // unfollow
+      await User.findByIdAndUpdate(currentUser._id, {
+        $pull: { following: targetUserId },
+      });
+      await User.findByIdAndUpdate(targetUserId, {
+        $pull: { followers: currentUser._id },
+      });
+    } else {
+      // follow
+      await User.findByIdAndUpdate(currentUser._id, {
+        $push: { following: targetUserId },
+      });
+      await User.findByIdAndUpdate(targetUserId, {
+        $push: { followers: currentUser._id },
+      });
+
+      // create notification
+      await Notification.create({
+        from: currentUser._id,
+        to: targetUserId,
+        type: "follow",
+      });
+    }
+
+    res.status(200).json({
+      message: isFollowing
+        ? "User unfollowed successfully"
+        : "User followed successfully",
+    });
   },
 );
