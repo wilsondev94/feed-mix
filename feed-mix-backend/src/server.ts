@@ -1,4 +1,8 @@
-import express, { type Request, type Response } from "express";
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import { ENV } from "./config/env.js";
 import { connectDb } from "./config/db.js";
 import cors from "cors";
@@ -22,6 +26,13 @@ app.get("/", (req: Request, res: Response) =>
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
+
+// error handling middleware
+// @ts-expect-error unused parameter
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ error: err.message || "Internal server error" });
+});
 
 const startServer = async () => {
   try {
