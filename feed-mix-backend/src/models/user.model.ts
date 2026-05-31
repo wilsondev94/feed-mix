@@ -1,6 +1,23 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
+export interface IUser {
+  _id: mongoose.Types.ObjectId;
+  clerkId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  profilePicture: string;
+  bannerImage: string;
+  bio: string;
+  location: string;
+  followers: mongoose.Types.ObjectId[];
+  following: mongoose.Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const userSchema = new mongoose.Schema<IUser>(
   {
     clerkId: {
       type: String,

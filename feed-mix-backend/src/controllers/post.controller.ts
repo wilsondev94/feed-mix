@@ -1,4 +1,3 @@
-import { getAuth } from "@clerk/express";
 import type { RequestHandler } from "express";
 import asyncHandler from "express-async-handler";
 import cloudinary from "../config/cloudinary.js";
@@ -69,7 +68,7 @@ export const getUserPosts: RequestHandler = asyncHandler(async (req, res) => {
 
 export const createPost: RequestHandler<{}, {}, { content: string }> =
   asyncHandler(async (req, res) => {
-    const { userId } = getAuth(req);
+    const user = req.user;
     const { content } = req.body;
     const imageFile = req.file;
 
@@ -78,7 +77,6 @@ export const createPost: RequestHandler<{}, {}, { content: string }> =
       return;
     }
 
-    const user = await User.findOne({ clerkId: userId });
     if (!user) {
       res.status(404).json({ error: "User not found" });
       return;

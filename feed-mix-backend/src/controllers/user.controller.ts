@@ -1,4 +1,4 @@
-import { clerkClient, getAuth } from "@clerk/express";
+import { clerkClient } from "@clerk/express";
 import type { RequestHandler } from "express";
 import asyncHandler from "express-async-handler";
 import mongoose from "mongoose";
@@ -18,7 +18,7 @@ export const getUserProfile: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 export const createUser: RequestHandler = asyncHandler(async (req, res) => {
-  const { userId } = getAuth(req);
+  const userId = req.user?._id;
 
   if (!userId) {
     res.status(401).json({ message: "Unauthorized" });
@@ -34,7 +34,7 @@ export const createUser: RequestHandler = asyncHandler(async (req, res) => {
   }
 
   // create new user from Clerk data
-  const clerkUser = await clerkClient.users.getUser(userId);
+  const clerkUser = await clerkClient.users.getUser(userId.toString());
 
   const userData = {
     clerkId: userId,
@@ -52,7 +52,7 @@ export const createUser: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 export const updateProfile: RequestHandler = asyncHandler(async (req, res) => {
-  const { userId } = getAuth(req);
+  const userId = req.user?._id;
 
   const user = await User.findOneAndUpdate({ clerkId: userId }, req.body, {
     new: true,
@@ -67,7 +67,7 @@ export const updateProfile: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 export const getCurrentUser: RequestHandler = asyncHandler(async (req, res) => {
-  const { userId } = getAuth(req);
+  const userId = req.user?._id;
   const user = await User.findOne({ clerkId: userId });
 
   if (!user) {
@@ -79,15 +79,14 @@ export const getCurrentUser: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 export const followUser: RequestHandler = asyncHandler(async (req, res) => {
-  const { userId } = getAuth(req);
+  const currentUser = req.user;
   const targetUserId = req.params.targetUserId as string;
 
-  if (userId === targetUserId) {
+  if (currentUser?._id.toString() === targetUserId) {
     res.status(400).json({ error: "You cannot follow yourself" });
     return;
   }
 
-  const currentUser = await User.findOne({ clerkId: userId });
   const targetUser = await User.findById(targetUserId);
 
   if (!currentUser || !targetUser) {
