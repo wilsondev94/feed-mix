@@ -1,4 +1,5 @@
 import express, {
+  type Express,
   type NextFunction,
   type Request,
   type Response,
@@ -14,7 +15,7 @@ import commentRoutes from "./routes/comment.route.js";
 import notificationRoutes from "./routes/notification.route.js";
 import { arcjetMiddleware } from "./middleware/arcjet.middleware.js";
 
-const app = express();
+const app: Express = express();
 
 app.use(cors());
 app.use(express.json());
@@ -56,3 +57,6 @@ const startServer = async () => {
 };
 
 startServer();
+
+// export for vercel
+export default app;
