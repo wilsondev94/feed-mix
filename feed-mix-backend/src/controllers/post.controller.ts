@@ -1,13 +1,13 @@
-import type { Request, RequestHandler, Response } from "express";
+import { getAuth } from "@clerk/express";
+import type { RequestHandler } from "express";
 import asyncHandler from "express-async-handler";
+import cloudinary from "../config/cloudinary.js";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
-import { getAuth } from "@clerk/express";
-import cloudinary from "../config/cloudinary.js";
 
 export const getPosts: RequestHandler = asyncHandler(
   // @ts-expect-error unused parameter
-  async (req: Request, res: Response) => {
+  async (req, res) => {
     const posts = await Post.find()
       .sort({ createdAt: -1 })
       .populate("user", "username firstName lastName profilePicture")
@@ -23,56 +23,52 @@ export const getPosts: RequestHandler = asyncHandler(
   },
 );
 
-export const getPost: RequestHandler = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { postId } = req.params;
+export const getPost: RequestHandler = asyncHandler(async (req, res) => {
+  const { postId } = req.params;
 
-    const post = await Post.findById(postId)
-      .populate("user", "username firstName lastName profilePicture")
-      .populate({
-        path: "comments",
-        populate: {
-          path: "user",
-          select: "username firstName lastName profilePicture",
-        },
-      });
+  const post = await Post.findById(postId)
+    .populate("user", "username firstName lastName profilePicture")
+    .populate({
+      path: "comments",
+      populate: {
+        path: "user",
+        select: "username firstName lastName profilePicture",
+      },
+    });
 
-    if (!post) {
-      res.status(404).json({ error: "Post not found" });
-      return;
-    }
+  if (!post) {
+    res.status(404).json({ error: "Post not found" });
+    return;
+  }
 
-    res.status(200).json({ post });
-  },
-);
+  res.status(200).json({ post });
+});
 
-export const getUserPosts: RequestHandler = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { username } = req.params;
+export const getUserPosts: RequestHandler = asyncHandler(async (req, res) => {
+  const { username } = req.params;
 
-    const user = await User.findOne({ username });
-    if (!user) {
-      res.status(404).json({ error: "User not found" });
-      return;
-    }
+  const user = await User.findOne({ username });
+  if (!user) {
+    res.status(404).json({ error: "User not found" });
+    return;
+  }
 
-    const posts = await Post.find({ user: user._id })
-      .sort({ createdAt: -1 })
-      .populate("user", "username firstName lastName profilePicture")
-      .populate({
-        path: "comments",
-        populate: {
-          path: "user",
-          select: "username firstName lastName profilePicture",
-        },
-      });
+  const posts = await Post.find({ user: user._id })
+    .sort({ createdAt: -1 })
+    .populate("user", "username firstName lastName profilePicture")
+    .populate({
+      path: "comments",
+      populate: {
+        path: "user",
+        select: "username firstName lastName profilePicture",
+      },
+    });
 
-    res.status(200).json({ posts });
-  },
-);
+  res.status(200).json({ posts });
+});
 
-export const createPost: RequestHandler = asyncHandler(
-  async (req: Request, res: Response) => {
+export const createPost: RequestHandler<{}, {}, { content: string }> =
+  asyncHandler(async (req, res) => {
     const { userId } = getAuth(req);
     const { content } = req.body;
     const imageFile = req.file;
@@ -117,10 +113,9 @@ export const createPost: RequestHandler = asyncHandler(
 
     const post = await Post.create({
       user: user._id,
-      content: content || "",
+      content: content ?? "",
       image: imageUrl,
     });
 
     res.status(201).json({ post });
-  },
-);
+  });
