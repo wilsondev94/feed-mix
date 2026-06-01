@@ -1,6 +1,7 @@
 import { useSSO } from "@clerk/expo";
 import { useState } from "react";
 import { Alert } from "react-native";
+import * as Linking from "expo-linking";
 
 export const useSocialAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -11,6 +12,7 @@ export const useSocialAuth = () => {
     try {
       const { createdSessionId, setActive } = await startSSOFlow({
         strategy,
+        redirectUrl: Linking.createURL("/(tabs)"),
       });
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
