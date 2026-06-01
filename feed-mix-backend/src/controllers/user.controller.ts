@@ -1,4 +1,4 @@
-import { clerkClient } from "@clerk/express";
+import { clerkClient, type ExpressRequestWithAuth } from "@clerk/express";
 import type { RequestHandler } from "express";
 import asyncHandler from "express-async-handler";
 import mongoose from "mongoose";
@@ -18,7 +18,8 @@ export const getUserProfile: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 export const createUser: RequestHandler = asyncHandler(async (req, res) => {
-  const userId = req.user?._id;
+  const clerkReq = req as unknown as ExpressRequestWithAuth;
+  const { userId } = clerkReq.auth();
 
   if (!userId) {
     res.status(401).json({ message: "Unauthorized" });

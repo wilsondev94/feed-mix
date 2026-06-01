@@ -7,12 +7,13 @@ import {
   updateProfile,
 } from "../controllers/user.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
+import { requireToSyncUser } from "../middleware/requireToSyncUser.middleware.js";
 
 const router: Router = express.Router();
 
 router.get("/profile/:username", getUserProfile);
 
-router.post("/create-user", protectRoute, createUser);
+router.post("/create-user", requireToSyncUser, createUser);
 router.get("/me", protectRoute, getCurrentUser);
 router.put("/profile", protectRoute, updateProfile);
 router.post("/follow/:targetUserId", followUser);
