@@ -41,6 +41,17 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="messages"
+        options={{
+          title: "",
+
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="mail" size={size} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

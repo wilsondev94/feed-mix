@@ -20,15 +20,22 @@ const SearchScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* HEADER */}
-      <View className="px-4 py-3 border-b border-gray-100">
-        <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-3">
-          <Feather name="search" size={20} color="#657786" />
-          <TextInput
-            placeholder="Search..."
-            className="flex-1 ml-3 text-base pl-1 py-0.5"
-            placeholderTextColor="#657786"
-          />
-        </View>
+      <View className="relative px-4 py-3 border-b border-gray-100">
+        {/* <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-3"> */}
+        <Feather
+          name="search"
+          size={20}
+          color="#657786"
+          className="absolute top-1/3 left-6
+          "
+        />
+
+        <TextInput
+          placeholder="Search..."
+          className="flex-1 text-base pl-9 pr-4 py-2 bg-gray-100 focus:ring-1 focus:ring-blue-500 focus:outline-none rounded-full"
+          placeholderTextColor="#657786"
+        />
+        {/* </View> */}
       </View>
 
       <ScrollView className="flex-1">
