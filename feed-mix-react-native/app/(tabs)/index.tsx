@@ -1,4 +1,5 @@
 import CreatePost from "@/components/CreatePost";
+import PostsList from "@/components/PostList";
 import SignOutButton from "@/components/SignOutButton";
 import { useSyncClerkUserToDb } from "@/hooks/services/useSyncClerkUserToDb";
 import { Ionicons } from "@expo/vector-icons";
@@ -28,7 +29,7 @@ const HomeScreen = () => {
         // }
       >
         <CreatePost />
-        {/* <PostsList /> */}
+        <PostsList />
       </ScrollView>
     </SafeAreaView>
   );
