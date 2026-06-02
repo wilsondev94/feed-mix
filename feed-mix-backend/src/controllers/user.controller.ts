@@ -68,8 +68,8 @@ export const updateProfile: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 export const getCurrentUser: RequestHandler = asyncHandler(async (req, res) => {
-  const userId = req.user?._id;
-  const user = await User.findOne({ clerkId: userId });
+  const user = req.user;
+  // const user = await User.findOne({ clerkId: userId });
 
   if (!user) {
     res.status(404).json({ error: "User not found" });
