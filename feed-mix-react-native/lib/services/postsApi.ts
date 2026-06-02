@@ -14,3 +14,6 @@ export const getUserPosts = (
 
 export const likePost = async (api: AxiosInstance, postId: string) =>
   api.post(API_ENDPOINTS.likePost(postId));
+
+export const deletePost = async (api: AxiosInstance, postId: string) =>
+  api.delete(API_ENDPOINTS.deletePost(postId));

@@ -5,4 +5,5 @@ export const API_ENDPOINTS = {
   getPosts: "/posts",
   getUserPosts: (username: string) => `/posts/user/${username}`,
   likePost: (postId: string) => `/posts/${postId}/like`,
+  deletePost: (postId: string) => `/posts/${postId}`,
 };

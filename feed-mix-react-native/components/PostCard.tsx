@@ -1,15 +1,50 @@
 import { formatDate, formatNumber } from "@/lib/utils/formatters";
-import { Post } from "@/types/api-types";
+import { Post, User } from "@/types/api-types";
 import { AntDesign, Feather } from "@expo/vector-icons";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface PostCardProps {
   post: Post;
-  onLike: (postId: string) => void;
   isLiked?: boolean;
+  currentUser?: User;
+  onLike: (postId: string) => void;
+  onDelete: (postId: string) => void;
 }
 
-const PostCard = ({ post, onLike, isLiked }: PostCardProps) => {
+const PostCard = ({
+  post,
+  isLiked,
+  currentUser,
+  onLike,
+  onDelete,
+}: PostCardProps) => {
+  const isOwnPost = post.user._id === currentUser?._id;
+
+  const handleDelete = () => {
+    if (Platform.OS === "web") {
+      if (confirm("Are you sure you want to delete this post?")) {
+        onDelete(post._id);
+      }
+      return;
+    }
+
+    Alert.alert("Delete Post", "Are you sure you want to delete this post?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => onDelete(post._id),
+      },
+    ]);
+  };
+
   return (
     <View className="border-b border-gray-100 bg-white">
       <View className="flex-row p-4">
@@ -28,6 +63,12 @@ const PostCard = ({ post, onLike, isLiked }: PostCardProps) => {
                 @{post.user.username} · {formatDate(post.createdAt)}
               </Text>
             </View>
+
+            {isOwnPost && (
+              <TouchableOpacity onPress={handleDelete}>
+                <Feather name="trash" size={20} color="#657786" />
+              </TouchableOpacity>
+            )}
           </View>
 
           {post.content && (

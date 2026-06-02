@@ -20,8 +20,6 @@ export const useCreatePostMutation = ({
     mutationFn: async (postData: { content: string; imageUri?: string }) => {
       const formData = new FormData();
 
-      console.log("FORM DATA", formData);
-
       if (postData.content) formData.append("content", postData.content);
 
       if (postData.imageUri) {

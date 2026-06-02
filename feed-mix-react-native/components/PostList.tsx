@@ -4,11 +4,13 @@ import { useLikePostMutation } from "@/hooks/services/useLikePostMutation";
 import { Post } from "@/types/api-types";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import PostCard from "./PostCard";
+import { useDeletePostMutation } from "@/hooks/services/useDeletePostMutation";
 
 const PostsList = ({ username }: { username?: string }) => {
   const { currentUser } = useGetCurrentUser();
   const { postsData, isLoading, error, refetch } = useGetPosts(username);
   const { toggleLike } = useLikePostMutation();
+  const { handleDeletePost } = useDeletePostMutation();
 
   const checkIsLiked = (postLikes: string[], currentUserId?: string) => {
     const isLiked = !!currentUserId && postLikes.includes(currentUserId);
@@ -52,7 +54,9 @@ const PostsList = ({ username }: { username?: string }) => {
         <PostCard
           key={post._id}
           post={post}
+          currentUser={currentUser?.data.user}
           onLike={toggleLike}
+          onDelete={handleDeletePost}
           isLiked={checkIsLiked(post.likes, currentUser?.data.user._id)}
         />
       ))}
