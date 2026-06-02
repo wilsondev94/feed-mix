@@ -11,6 +11,7 @@ export const axiosClient = (
 
   api.interceptors.request.use(
     async (config) => {
+      console.log("AXIOS::::", config);
       try {
         const token = await getToken();
         if (token) {

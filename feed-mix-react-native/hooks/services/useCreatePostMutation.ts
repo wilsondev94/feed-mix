@@ -20,6 +20,8 @@ export const useCreatePostMutation = ({
     mutationFn: async (postData: { content: string; imageUri?: string }) => {
       const formData = new FormData();
 
+      console.log("FORM DATA", formData);
+
       if (postData.content) formData.append("content", postData.content);
 
       if (postData.imageUri) {
@@ -33,11 +35,18 @@ export const useCreatePostMutation = ({
         };
         const mimeType = mimeTypeMap[fileType] || "image/jpeg";
 
-        formData.append("image", {
-          uri: postData.imageUri,
-          name: `image.${fileType}`,
-          type: mimeType,
-        } as unknown as Blob);
+        if (Platform.OS === "web") {
+          // fetch the image and convert to blob for web
+          const response = await fetch(postData.imageUri);
+          const blob = await response.blob();
+          formData.append("image", blob, `image.${fileType}`);
+        } else {
+          formData.append("image", {
+            uri: postData.imageUri,
+            name: `image.${fileType}`,
+            type: mimeType,
+          } as unknown as Blob);
+        }
       }
 
       return api.post(API_ENDPOINTS.posts, formData, {

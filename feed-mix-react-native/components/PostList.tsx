@@ -1,10 +1,19 @@
+import { useGetCurrentUser } from "@/hooks/services/useGetCurrentUser";
 import { useGetPosts } from "@/hooks/services/useGetPosts";
+import { useLikePostMutation } from "@/hooks/services/useLikePostMutation";
 import { Post } from "@/types/api-types";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import PostCard from "./PostCard";
 
 const PostsList = ({ username }: { username?: string }) => {
+  const { currentUser } = useGetCurrentUser();
   const { postsData, isLoading, error, refetch } = useGetPosts(username);
+  const { toggleLike } = useLikePostMutation();
+
+  const checkIsLiked = (postLikes: string[], currentUserId?: string) => {
+    const isLiked = !!currentUserId && postLikes.includes(currentUserId);
+    return isLiked;
+  };
 
   if (isLoading) {
     return (
@@ -40,7 +49,12 @@ const PostsList = ({ username }: { username?: string }) => {
   return (
     <>
       {postsData?.posts.map((post: Post) => (
-        <PostCard key={post._id} post={post} />
+        <PostCard
+          key={post._id}
+          post={post}
+          onLike={toggleLike}
+          isLiked={checkIsLiked(post.likes, currentUser?.data.user._id)}
+        />
       ))}
     </>
   );

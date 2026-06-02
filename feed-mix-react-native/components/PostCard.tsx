@@ -1,13 +1,15 @@
-import { formatDate } from "@/lib/utils/formatters";
+import { formatDate, formatNumber } from "@/lib/utils/formatters";
 import { Post } from "@/types/api-types";
-import { Feather } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 interface PostCardProps {
   post: Post;
+  onLike: (postId: string) => void;
+  isLiked?: boolean;
 }
 
-const PostCard = ({ post }: PostCardProps) => {
+const PostCard = ({ post, onLike, isLiked }: PostCardProps) => {
   return (
     <View className="border-b border-gray-100 bg-white">
       <View className="flex-row p-4">
@@ -46,6 +48,23 @@ const PostCard = ({ post }: PostCardProps) => {
             <TouchableOpacity className="flex-row items-center">
               <Feather name="repeat" size={18} color="#657786" />
               <Text className="text-gray-500 text-sm ml-2">0</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="flex-row items-center"
+              onPress={() => onLike(post._id)}
+            >
+              {isLiked ? (
+                <AntDesign name="heart" size={18} color="#E0245E" />
+              ) : (
+                <Feather name="heart" size={18} color="#657786" />
+              )}
+
+              <Text
+                className={`text-sm ml-2 ${isLiked ? "text-red-500" : "text-gray-500"}`}
+              >
+                {formatNumber(post.likes?.length || 0)}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity>

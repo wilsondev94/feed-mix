@@ -4,4 +4,5 @@ export const API_ENDPOINTS = {
   posts: "/posts/create-post",
   getPosts: "/posts",
   getUserPosts: (username: string) => `/posts/user/${username}`,
+  likePost: (postId: string) => `/posts/${postId}/like`,
 };

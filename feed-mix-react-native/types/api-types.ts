@@ -6,6 +6,10 @@ export interface User {
   profilePicture?: string;
 }
 
+export interface CurrentUser {
+  data: { user: User };
+}
+
 export interface Comment {
   _id: string;
   content: string;

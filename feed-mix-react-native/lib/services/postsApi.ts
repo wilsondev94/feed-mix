@@ -11,3 +11,6 @@ export const getUserPosts = (
   api: AxiosInstance,
   username: string,
 ): Promise<Posts> => api.get(API_ENDPOINTS.getUserPosts(username));
+
+export const likePost = async (api: AxiosInstance, postId: string) =>
+  api.post(API_ENDPOINTS.likePost(postId));
