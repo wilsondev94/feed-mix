@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useApiClient } from "@/lib/axiosClient";
 import { useAuth } from "@clerk/expo";
-import { userApi } from "@/lib/services";
 import { AxiosResponse } from "axios";
+import { syncClerkUserToDb } from "@/lib/services/userApi";
 
 export interface SyncUserApiResponse {
   message: string;
@@ -13,12 +13,10 @@ export const useSyncClerkUserToDb = () => {
   const { isSignedIn } = useAuth();
   const api = useApiClient();
 
-  console.log("IS SIGNED IN", isSignedIn);
-
   const { mutate, data } = useMutation<
     AxiosResponse<{ message: SyncUserApiResponse }>
   >({
-    mutationFn: () => userApi.syncClerkUserToDb(api),
+    mutationFn: () => syncClerkUserToDb(api),
     onSuccess: (res) =>
       console.log("User synced successfully:", res.data.message),
     onError: (error) => console.log("User sync failed:", error),
