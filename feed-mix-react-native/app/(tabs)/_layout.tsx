@@ -31,6 +31,17 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          title: "",
+
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="bell" size={size} color={color} />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="search"
         options={{
@@ -41,7 +52,6 @@ export default function TabLayout() {
           ),
         }}
       />
-
       <Tabs.Screen
         name="messages"
         options={{

@@ -30,3 +30,33 @@ export interface Post {
 export interface Posts {
   posts: Post[];
 }
+
+export const NotificationTypeMap = {
+  LIKE: "like",
+  COMMENT: "comment",
+  FOLLOW: "follow",
+} as const;
+
+export type NotificationType =
+  (typeof NotificationTypeMap)[keyof typeof NotificationTypeMap];
+
+export interface Notification {
+  _id: string;
+  from: {
+    username: string;
+    firstName: string;
+    lastName: string;
+    profilePicture?: string;
+  };
+  type: NotificationType;
+  post?: {
+    _id: string;
+    content: string;
+    image?: string;
+  };
+  comment?: {
+    _id: string;
+    content: string;
+  };
+  createdAt: string;
+}
