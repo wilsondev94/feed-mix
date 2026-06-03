@@ -5,12 +5,19 @@ import { Post } from "@/types/api-types";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import PostCard from "./PostCard";
 import { useDeletePostMutation } from "@/hooks/services/useDeletePostMutation";
+import { useState } from "react";
+import CommentsModal from "./CommentModal";
 
 const PostsList = ({ username }: { username?: string }) => {
   const { currentUser } = useGetCurrentUser();
   const { postsData, isLoading, error, refetch } = useGetPosts(username);
   const { toggleLike } = useLikePostMutation();
   const { handleDeletePost } = useDeletePostMutation();
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+
+  const selectedPost = selectedPostId
+    ? postsData?.posts.find((p: Post) => p._id === selectedPostId)
+    : null;
 
   const checkIsLiked = (postLikes: string[], currentUserId?: string) => {
     const isLiked = !!currentUserId && postLikes.includes(currentUserId);
@@ -58,8 +65,14 @@ const PostsList = ({ username }: { username?: string }) => {
           onLike={toggleLike}
           onDelete={handleDeletePost}
           isLiked={checkIsLiked(post.likes, currentUser?.data.user._id)}
+          onComment={(post: Post) => setSelectedPostId(post._id)}
         />
       ))}
+
+      <CommentsModal
+        selectedPost={selectedPost}
+        onClose={() => setSelectedPostId(null)}
+      />
     </>
   );
 };

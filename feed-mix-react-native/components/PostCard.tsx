@@ -15,6 +15,7 @@ interface PostCardProps {
   isLiked?: boolean;
   currentUser?: User;
   onLike: (postId: string) => void;
+  onComment: (post: Post) => void;
   onDelete: (postId: string) => void;
 }
 
@@ -23,6 +24,7 @@ const PostCard = ({
   isLiked,
   currentUser,
   onLike,
+  onComment,
   onDelete,
 }: PostCardProps) => {
   const isOwnPost = post.user._id === currentUser?._id;
@@ -86,6 +88,16 @@ const PostCard = ({
           )}
 
           <View className="flex-row justify-between max-w-xs">
+            <TouchableOpacity
+              className="flex-row items-center"
+              onPress={() => onComment(post)}
+            >
+              <Feather name="message-circle" size={18} color="#657786" />
+              <Text className="text-gray-500 text-sm ml-2">
+                {formatNumber(post.comments?.length || 0)}
+              </Text>
+            </TouchableOpacity>
+
             <TouchableOpacity className="flex-row items-center">
               <Feather name="repeat" size={18} color="#657786" />
               <Text className="text-gray-500 text-sm ml-2">0</Text>

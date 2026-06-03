@@ -17,3 +17,12 @@ export const likePost = async (api: AxiosInstance, postId: string) =>
 
 export const deletePost = async (api: AxiosInstance, postId: string) =>
   api.delete(API_ENDPOINTS.deletePost(postId));
+
+export const postComment = async (
+  api: AxiosInstance,
+  postId: string,
+  content: string,
+) => {
+  const res = await api.post(`/comments/post/${postId}`, { content });
+  return res.data;
+};
