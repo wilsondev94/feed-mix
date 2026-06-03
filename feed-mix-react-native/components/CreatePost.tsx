@@ -33,7 +33,7 @@ const CreatePost = () => {
         />
         <View className="flex-1">
           <TextInput
-            className="text-gray-900 text-base rounded-md px-2 py-1 bg-gray-100 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+            className="text-gray-900 text-base rounded-md px-2 py-1 bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholder="What's happening?"
             placeholderTextColor="#657786"
             multiline
