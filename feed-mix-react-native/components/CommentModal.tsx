@@ -135,34 +135,40 @@ const CommentsModal = ({ selectedPost, onClose }: CommentsModalProps) => {
           </View>
 
           {/* COMMENTS LIST */}
-          {selectedPost.comments.toReversed().map((comment) => (
-            <View
-              key={comment._id}
-              className="border-b border-gray-100 bg-white p-4"
-            >
-              <View className="flex-row">
-                <Image
-                  source={{ uri: comment.user.profilePicture }}
-                  className="w-10 h-10 rounded-full mr-3"
-                />
+          {selectedPost.comments.length !== 0 ? (
+            selectedPost.comments.toReversed().map((comment) => (
+              <View
+                key={comment._id}
+                className="border-b border-gray-100 bg-white p-4"
+              >
+                <View className="flex-row">
+                  <Image
+                    source={{ uri: comment.user.profilePicture }}
+                    className="w-10 h-10 rounded-full mr-3"
+                  />
 
-                <View className="flex-1">
-                  <View className="flex-row items-center mb-1">
-                    <Text className="font-bold text-gray-900 mr-1">
-                      {comment.user.firstName} {comment.user.lastName}
-                    </Text>
-                    <Text className="text-gray-500 text-sm ml-1">
-                      @{comment.user.username}
+                  <View className="flex-1">
+                    <View className="flex-row items-center mb-1">
+                      <Text className="font-bold text-gray-900 mr-1">
+                        {comment.user.firstName} {comment.user.lastName}
+                      </Text>
+                      <Text className="text-gray-500 text-sm ml-1">
+                        @{comment.user.username}
+                      </Text>
+                    </View>
+
+                    <Text className="text-gray-900 text-base leading-5 mb-2">
+                      {comment.content}
                     </Text>
                   </View>
-
-                  <Text className="text-gray-900 text-base leading-5 mb-2">
-                    {comment.content}
-                  </Text>
                 </View>
               </View>
+            ))
+          ) : (
+            <View className="flex-row items-center justify-center h-full">
+              <Text className="text-black/70 text-base">No comments yet.</Text>
             </View>
-          ))}
+          )}
         </ScrollView>
       )}
     </Modal>
