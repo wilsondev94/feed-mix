@@ -1,25 +1,44 @@
+import useDeleteNotificationMutation from "@/hooks/services/useDeleteNotificationMutation";
 import { formatDate } from "@/lib/utils/formatters";
+import { getNotificationText } from "@/lib/utils/notifications/getNotificationText";
 import { Notification, NotificationTypeMap } from "@/types/api-types";
 import { Feather } from "@expo/vector-icons";
-import { Image, Text, View } from "react-native";
+import {
+  Alert,
+  Image,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface NotificationCardProps {
   notification: Notification;
 }
 
 const NotificationCard = ({ notification }: NotificationCardProps) => {
-  const getNotificationText = () => {
-    const name = `${notification.from.firstName} ${notification.from.lastName}`;
-    switch (notification.type) {
-      case NotificationTypeMap.LIKE:
-        return `${name} liked your post`;
-      case NotificationTypeMap.COMMENT:
-        return `${name} commented on your post`;
-      case NotificationTypeMap.FOLLOW:
-        return `${name} started following you`;
-      default:
-        return "";
+  const { deleteNotification } = useDeleteNotificationMutation();
+
+  const handleDelete = () => {
+    if (Platform.OS === "web") {
+      if (confirm("Are you sure you want to delete this notification?")) {
+        deleteNotification(notification._id);
+      }
+      return;
     }
+
+    Alert.alert(
+      "Delete Notification",
+      "Are you sure you want to delete this notification?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => deleteNotification(notification._id),
+        },
+      ],
+    );
   };
 
   const getNotificationIcon = () => {
@@ -62,9 +81,21 @@ const NotificationCard = ({ notification }: NotificationCardProps) => {
                 </Text>
               </Text>
               <Text className="text-gray-700 text-sm mb-2">
-                {getNotificationText()}
+                {getNotificationText(
+                  notification.type,
+                  notification.from.firstName,
+                  notification.from.lastName,
+                )}
               </Text>
             </View>
+            <TouchableOpacity className="ml-2 p-1">
+              <Feather
+                name="trash"
+                size={16}
+                color="#E0245E"
+                onPress={handleDelete}
+              />
+            </TouchableOpacity>
           </View>
 
           {notification.post && (

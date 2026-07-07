@@ -8,3 +8,11 @@ export const getNotifications = async (
   const res = await api.get(API_ENDPOINTS.getNotifications);
   return res.data.notifications;
 };
+
+export const deleteNotification = async (
+  notificationId: string,
+  api: AxiosInstance,
+) => {
+  const res = await api.get(API_ENDPOINTS.deleteNotification(notificationId));
+  return res.data;
+};

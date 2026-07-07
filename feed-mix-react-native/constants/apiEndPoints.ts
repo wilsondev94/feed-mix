@@ -8,4 +8,6 @@ export const API_ENDPOINTS = {
   deletePost: (postId: string) => `/posts/${postId}`,
   postComment: (postId: string) => `/comment/post/${postId}`,
   getNotifications: "/notifications",
+  deleteNotification: (notificationId: string) =>
+    `/notifications/${notificationId}`,
 };
