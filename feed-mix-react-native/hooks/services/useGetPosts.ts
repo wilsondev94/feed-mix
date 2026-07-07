@@ -6,18 +6,13 @@ import { useQuery } from "@tanstack/react-query";
 export const useGetPosts = (username?: string) => {
   const api = useApiClient();
 
-  const {
-    data: postsData,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: username ? [QUERY_KEYS.userPosts, username] : [QUERY_KEYS.posts],
     queryFn: () => (username ? getUserPosts(api, username) : getPosts(api)),
   });
 
   return {
-    postsData,
+    postsData: data?.data,
     isLoading,
     error,
     refetch,

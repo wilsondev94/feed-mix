@@ -1,17 +1,11 @@
 import { ClerkProvider } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
-// import {
-//   DarkTheme,
-//   DefaultTheme,
-//   ThemeProvider,
-// } from "@react-navigation/native";
+import { StatusBar } from "expo-status-bar";
 import { Stack } from "expo-router";
 import "react-native-reanimated";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "../global.css";
-
-// import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -25,19 +19,15 @@ if (!publishableKey) {
 
 const queryClient = new QueryClient();
 export default function RootLayout() {
-  // const colorScheme = useColorScheme();
-
   return (
-    // <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <QueryClientProvider client={queryClient}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(auth)" />
           <Stack.Screen name="(tabs)" />
         </Stack>
-        {/* <StatusBar style="auto" /> */}
+        <StatusBar style="auto" />
       </QueryClientProvider>
     </ClerkProvider>
-    // </ThemeProvider>
   );
 }

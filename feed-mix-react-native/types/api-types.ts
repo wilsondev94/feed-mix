@@ -3,7 +3,13 @@ export interface User {
   username: string;
   firstName: string;
   lastName: string;
-  profilePicture?: string;
+  profilePicture: string;
+  bannerImage: string;
+  bio: string;
+  location: string;
+  createdAt: string;
+  following: [];
+  followers: [];
 }
 
 export interface CurrentUser {
@@ -28,7 +34,9 @@ export interface Post {
 }
 
 export interface Posts {
-  posts: Post[];
+  data: {
+    posts: Post[];
+  };
 }
 
 export const NotificationTypeMap = {
