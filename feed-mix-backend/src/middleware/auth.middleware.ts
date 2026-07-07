@@ -15,7 +15,9 @@ export const protectRoute = async (
 
   const { userId } = clerkReq.auth();
   const user = await User.findOne({ clerkId: userId })
-    .select("_id username profilePicture")
+    .select(
+      "_id username profilePicture firstName lastName bannerImage bio location createdAt followers following",
+    )
     .lean();
 
   if (!user) {
