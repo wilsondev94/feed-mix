@@ -1,9 +1,13 @@
+import EditProfileModal from "@/components/EditProfileModal";
 import PostsList from "@/components/PostList";
 import SignOutButton from "@/components/SignOutButton";
+import { useProfile } from "@/hooks/services/useEditProfileMutation";
 import { useGetCurrentUser } from "@/hooks/services/useGetCurrentUser";
 import { useGetPosts } from "@/hooks/services/useGetPosts";
+import { FormData } from "@/types/api-types";
 import { Feather } from "@expo/vector-icons";
 import { format } from "date-fns";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -20,18 +24,44 @@ import {
 
 const Profile = () => {
   const insets = useSafeAreaInsets();
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
+    bio: "",
+    location: "",
+  });
   const {
     currentUser,
     isLoading,
     refetch: refetchProfile,
   } = useGetCurrentUser();
+
   const {
     postsData: userPosts,
     refetch: refetchPosts,
     isLoading: isRefetching,
   } = useGetPosts(currentUser?.data.user.username);
 
-  console.log("PROFILE", userPosts);
+  const { saveProfile, isUpdating, refetch } = useProfile({
+    setIsEditModalVisible,
+  });
+
+  const handleOpenEditModal = () => {
+    if (currentUser) {
+      setFormData({
+        firstName: currentUser.data.user.firstName || "",
+        lastName: currentUser.data.user.lastName || "",
+        bio: currentUser.data.user.bio || "",
+        location: currentUser.data.user.location || "",
+      });
+    }
+    setIsEditModalVisible(true);
+  };
+
+  const handleUpdateFormField = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   if (isLoading) {
     return (
@@ -86,6 +116,13 @@ const Profile = () => {
               source={{ uri: currentUser?.data.user.profilePicture }}
               className="size-32 rounded-full border-4 border-white"
             />
+
+            <TouchableOpacity
+              onPress={handleOpenEditModal}
+              className="border border-gray-300 px-6 py-2 rounded-full"
+            >
+              <Text className="font-semibold text-gray-900">Edit profile</Text>
+            </TouchableOpacity>
           </View>
 
           <View className="mb-4">
@@ -149,6 +186,14 @@ const Profile = () => {
         </View>
         <PostsList username={currentUser?.data.user.username} />
       </ScrollView>
+      <EditProfileModal
+        isVisible={isEditModalVisible}
+        onClose={() => setIsEditModalVisible(false)}
+        formData={formData}
+        saveProfile={saveProfile}
+        updateFormField={handleUpdateFormField}
+        isUpdating={isUpdating}
+      />
     </SafeAreaView>
   );
 };

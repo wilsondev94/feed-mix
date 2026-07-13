@@ -68,3 +68,10 @@ export interface Notification {
   };
   createdAt: string;
 }
+
+export interface FormData {
+  firstName: string;
+  lastName: string;
+  bio: string;
+  location: string;
+}
