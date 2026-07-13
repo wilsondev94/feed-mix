@@ -43,7 +43,7 @@ const Profile = () => {
     isLoading: isRefetching,
   } = useGetPosts(currentUser?.data.user.username);
 
-  const { saveProfile, isUpdating, refetch } = useProfile({
+  const { saveProfile, isUpdating } = useProfile({
     setIsEditModalVisible,
   });
 
